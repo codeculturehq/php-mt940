@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/codeculturehq/php-mt940.png?branch=master)](https://travis-ci.org/codeculturehq/php-mt940)
 [![Latest Stable Version](https://poser.pugx.org/kingsquare/php-mt940/v/stable.png)](https://packagist.org/packages/kingsquare/php-mt940)
 [![License](https://poser.pugx.org/kingsquare/php-mt940/license.png)](https://packagist.org/packages/kingsquare/php-mt940)
-[![wercker status](https://app.wercker.com/status/1b20215cc9fee0e4effbe7ad81da1328/s/ "wercker status")](https://app.wercker.com/project/bykey/1b20215cc9fee0e4effbe7ad81da1328)
+[![wercker status](https://app.wercker.com/status/55ba46ae07c9d9a02b03f585/s/ "wercker status")](https://app.wercker.com/project/bykey/55ba46ae07c9d9a02b03f585)
 
 README
 ======
