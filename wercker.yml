@@ -6,13 +6,13 @@ build:
         code: |
           curl -sS https://getcomposer.org/installer | php
           sudo mv composer.phar /usr/local/bin/composer
-    
-    -script:
+
+    - script:
         name: Install phpenv
         code: |
           sudo apt-get update
           sudo apt-get install phpenv
-    
+
     - script:
         name: Add project-config.ini
         code: phpenv config-add test/phpconfig.ini
