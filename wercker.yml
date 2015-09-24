@@ -1,7 +1,24 @@
-box: wercker/php
+box: php:5.6-cli
 build:
   steps:
-    - leipert/composer-install@0.0.1
+    - script:
+        name: Install composer & git
+        code: |
+          curl -sS https://getcomposer.org/installer | php
+          sudo mv composer.phar /usr/local/bin/composer
+          apt-get update
+          apt-get -y install git
+
+    - script:
+        name: Install phpenv
+        code: |
+          cd ~ 
+          git clone git://github.com/phpenv/phpenv.git .phpenv
+          sudo echo 'export PATH="$HOME/.phpenv/bin:$PATH"' >> ~/.bash_profile
+          sudo echo 'eval "$(phpenv init -)"' >> ~/.bash_profile
+          source ~/.bash_profile
+          phpenv rehash
+
     - script:
         name: Add project-config.ini
         code: phpenv config-add test/phpconfig.ini
