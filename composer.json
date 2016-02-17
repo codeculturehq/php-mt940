@@ -1,30 +1,13 @@
 {
-<<<<<<< HEAD
   "name": "codeculture/php-mt940",
   "description": "Simple MT940 parser in PHP | kingsquare/php-mt940 fork",
   "keywords": ["mt940", "parsing"],
-=======
-  "name": "kingsquare/php-mt940",
-  "description": "Simple MT940 parser in PHP",
-  "keywords": [
-    "mt940",
-    "parsing"
-  ],
->>>>>>> origin/master
   "homepage": "https://github.com/fruitl00p/php-mt940",
   "type": "library",
   "license": "MIT",
   "authors": [
-<<<<<<< HEAD
 	{ "name": "codeculture", "email": "info@codeculture.de" },
 	{ "name": "Robin Speekenbrink", "email": "robin@kingsquare.nl" }
-
-=======
-    {
-      "name": "Robin Speekenbrink",
-      "email": "robin@kingsquare.nl"
-    }
->>>>>>> origin/master
   ],
   "require": {
     "php": ">=5.5"
