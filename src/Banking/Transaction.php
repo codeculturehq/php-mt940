@@ -1,10 +1,10 @@
 <?php
+
 namespace Kingsquare\Banking;
 
 /**
  * @property string rawData A container after parsing a statement containing 'rawdata' if debug was true on the engine
  *
- * @package Kingsquare\Banking
  * @author Kingsquare (source@kingsquare.nl)
  * @license http://opensource.org/licenses/MIT MIT
  */
@@ -17,6 +17,7 @@ class Transaction implements \JsonSerializable
     private $accountName = '';
     private $price = 0.0;
     private $debitcredit = '';
+    private $cancellation = false;
     private $description = '';
     private $valueTimestamp = 0;
     private $entryTimestamp = 0;
@@ -60,6 +61,14 @@ class Transaction implements \JsonSerializable
     public function setDebitCredit($var)
     {
         $this->debitcredit = (string) $var;
+    }
+
+    /**
+     * @param bool $var
+     */
+    public function setCancellation($var)
+    {
+        $this->cancellation = (bool) $var;
     }
 
     /**
@@ -168,7 +177,7 @@ class Transaction implements \JsonSerializable
      */
     public function isDebit()
     {
-        return ($this->getDebitCredit() == self::DEBIT);
+        return $this->getDebitCredit() == self::DEBIT;
     }
 
     /**
@@ -176,6 +185,14 @@ class Transaction implements \JsonSerializable
      */
     public function isCredit()
     {
-        return ($this->getDebitCredit() == self::CREDIT);
+        return $this->getDebitCredit() == self::CREDIT;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCancellation()
+    {
+        return $this->cancellation;
     }
 }

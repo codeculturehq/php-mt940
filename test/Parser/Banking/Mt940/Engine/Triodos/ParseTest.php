@@ -17,8 +17,8 @@ class ParseTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $engine = new Triodos;
-        $engine->loadString(file_get_contents(__DIR__ . '/sample'));
+        $engine = new Triodos();
+        $engine->loadString(file_get_contents(__DIR__.'/sample'));
         $this->statements = $engine->parse();
     }
 
@@ -79,7 +79,7 @@ class ParseTest extends \PHPUnit_Framework_TestCase
                 '121123',
         ];
         foreach ($this->statements as $i => $statement) {
-            $this->assertSame($known[$i], $statement->getTimestamp('ymd'));
+            $this->assertSame($known[$i], $statement->getStartTimestamp('ymd'));
         }
     }
 
@@ -91,4 +91,19 @@ class ParseTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testParsesAllFoundStatements()
+    {
+        $statements = $this->statements;
+
+        $first = $statements[0];
+        $last = $statements[1];
+
+        $this->assertEquals('23-11-2012', $first->getStartTimestamp('d-m-Y'));
+        $this->assertEquals('23-11-2012', $first->getEndTimestamp('d-m-Y'));
+        $this->assertEquals(150, $first->getDeltaPrice());
+
+        $this->assertEquals('23-11-2012', $last->getStartTimestamp('d-m-Y'));
+        $this->assertEquals('23-11-2012', $last->getEndTimestamp('d-m-Y'));
+        $this->assertEquals(-59.02, $last->getDeltaPrice());
+    }
 }

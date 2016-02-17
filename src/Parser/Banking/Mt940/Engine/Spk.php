@@ -1,20 +1,20 @@
 <?php
+
 namespace Kingsquare\Parser\Banking\Mt940\Engine;
 
 use Kingsquare\Parser\Banking\Mt940\Engine;
 
 /**
- * @package Kingsquare\Parser\Banking\Mt940\Engine
  * @author Timotheus Pokorra (timotheus.pokorra@solidcharity.com)
  * @license http://opensource.org/licenses/MIT MIT
  *
  * This is for german banks, for example Sparkasse
- *
  */
 class Spk extends Engine
 {
     /**
-     * returns the name of the bank
+     * returns the name of the bank.
+     *
      * @return string
      */
     protected function parseStatementBank()
@@ -22,65 +22,57 @@ class Spk extends Engine
         return 'Spk';
     }
 
-
     /**
-     * Overloaded: Sparkasse uses 60M and 60F
-     * @inheritdoc
+     * Overloaded: Sparkasse uses 60M and 60F.
+     *
+     * {@inheritdoc}
      */
     protected function parseStatementStartPrice()
     {
-        $results = [];
-        if (preg_match('/:60[FM]:.*EUR([\d,\.]+)*/', $this->getCurrentStatementData(), $results)
-                && !empty($results[1])
-        ) {
-            return $this->sanitizePrice($results[1]);
-        }
-
-        return '';
+        return parent::parseStatementPrice('60[FM]');
     }
 
     /**
-     * Overloaded: Sparkasse uses 60M and 60F
-     * @inheritdoc
+     * Overloaded: Sparkasse uses 60M and 60F.
+     *
+     * {@inheritdoc}
      */
-    protected function parseStatementTimestamp()
+    protected function parseStatementStartTimestamp()
     {
-        $results = [];
-        if (preg_match('/:60[FM]:[C|D](\d{6})*/', $this->getCurrentStatementData(), $results)
-                && !empty($results[1])
-        ) {
-            return $this->sanitizeTimestamp($results[1], 'ymd');
-        }
-
-        return 0;
+        return parent::parseTimestampFromStatement('60[FM]');
     }
 
     /**
-     * Overloaded: Sparkasse uses 62M and 62F
-     * @inheritdoc
+     * Overloaded: Sparkasse uses 60M and 60F.
+     *
+     * {@inheritdoc}
+     */
+    protected function parseStatementEndTimestamp()
+    {
+        return parent::parseTimestampFromStatement('60[FM]');
+    }
+
+    /**
+     * Overloaded: Sparkasse uses 62M and 62F.
+     *
+     * {@inheritdoc}
      */
     protected function parseStatementEndPrice()
     {
-        $results = [];
-        if (preg_match('/:62[FM]:.*EUR([\d,\.]+)*/', $this->getCurrentStatementData(), $results)
-                && !empty($results[1])
-        ) {
-            return $this->sanitizePrice($results[1]);
-        }
-
-        return '';
+        return parent::parseStatementPrice('62[FM]');
     }
 
     /**
      * Overloaded: Sparkasse can have the 3rd character of the currencyname after the C/D
-     * currency codes last letter is always a letter http://www.xe.com/iso4217.php
-     * @inheritdoc
+     * currency codes last letter is always a letter http://www.xe.com/iso4217.php.
+     *
+     * {@inheritdoc}
      */
     protected function parseTransactionPrice()
     {
         $results = [];
         if (preg_match('/^:61:.*[CD][a-zA-Z]?([\d,\.]+)N/i', $this->getCurrentTransactionData(), $results)
-            && !empty($results[1])
+                && !empty($results[1])
         ) {
             return $this->sanitizePrice($results[1]);
         }
@@ -89,14 +81,15 @@ class Spk extends Engine
     }
 
     /**
-     * Overloaded: Sparkasse can have the 3rd character of the currencyname after the C/D and an "R" for cancellation befor the C/D
-     * @inheritdoc
+     * Overloaded: Sparkasse can have the 3rd character of the currencyname after the C/D and an "R" for cancellation befor the C/D.
+     *
+     * {@inheritdoc}
      */
     protected function parseTransactionDebitCredit()
     {
         $results = [];
         if (preg_match('/^:61:\d+R?([CD]).?\d+/', $this->getCurrentTransactionData(), $results)
-            && !empty($results[1])
+                && !empty($results[1])
         ) {
             return $this->sanitizeDebitCredit($results[1]);
         }
@@ -105,8 +98,25 @@ class Spk extends Engine
     }
 
     /**
-     * Overloaded: Sparkasse does not have a header line
-     * @inheritdoc
+     * Overloaded: Sparkasse use the Field 61 for cancellations
+     *
+     * {@inheritdoc}
+     */
+    protected function parseTransactionCancellation()
+    {
+        $results = [];
+        if (preg_match('/^:61:\d+(R)?[CD].?\d+/', $this->getCurrentTransactionData(), $results)
+            && !empty($results[1])
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Overloaded: Sparkasse does not have a header line.
+     *
+     * {@inheritdoc}
      */
     protected function parseStatementData()
     {
@@ -116,5 +126,18 @@ class Spk extends Engine
                 -1,
                 PREG_SPLIT_NO_EMPTY
         );
+    }
+
+    /**
+     * Overloaded: Is applicable if first or second line has :20:STARTUMS or first line has -.
+     *
+     * {@inheritdoc}
+     */
+    public static function isApplicable($string)
+    {
+        $firstline = strtok($string, "\r\n\t");
+        $secondline = strtok("\r\n\t");
+
+        return strpos($firstline, ':20:STARTUMS') !== false || $firstline === '-' && $secondline === ':20:STARTUMS';
     }
 }

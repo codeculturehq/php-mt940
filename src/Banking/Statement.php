@@ -1,10 +1,10 @@
 <?php
+
 namespace Kingsquare\Banking;
 
 /**
  * @property array rawData used for debugging purposes
  *
- * @package Kingsquare\Banking
  * @author Kingsquare (source@kingsquare.nl)
  * @license http://opensource.org/licenses/MIT MIT
  */
@@ -15,7 +15,8 @@ class Statement implements \JsonSerializable
     private $transactions = [];
     private $startPrice = 0.0;
     private $endPrice = 0.0;
-    private $timestamp = 0;
+    private $startTimestamp = 0;
+    private $endTimestamp = 0;
     private $number = '';
 
     /**
@@ -67,11 +68,32 @@ class Statement implements \JsonSerializable
     }
 
     /**
+     * @deprecated
+     *
      * @param int $var
      */
     public function setTimestamp($var)
     {
-        $this->timestamp = (int) $var;
+        trigger_error('Deprecated in favor of splitting the start and end timestamps for a statement. '.
+                'Please use setStartTimestamp($format) or setEndTimestamp($format) instead. '.
+                'setTimestamp is now setStartTimestamp', E_USER_DEPRECATED);
+        return $this->setStartTimestamp($var);
+    }
+
+    /**
+     * @param $var
+     */
+    public function setStartTimestamp($var)
+    {
+        $this->startTimestamp = (int) $var;
+    }
+
+    /**
+     * @param $var
+     */
+    public function setEndTimestamp($var)
+    {
+        $this->endTimestamp = (int) $var;
     }
 
     /**
@@ -125,11 +147,37 @@ class Statement implements \JsonSerializable
     /**
      * @param string $format
      *
+     * @deprecated This method will be removed in favor of getStartTimestamp / getEndTimestamp this is slated for removal in next major
+     *
      * @return string
      */
     public function getTimestamp($format = 'U')
     {
-        return date($format, $this->timestamp);
+        trigger_error('Deprecated in favor of splitting the start and end timestamps for a statement. '.
+                'Please use setStartTimestamp($format) or setEndTimestamp($format) instead. '.
+                'getTimestamp is now getStartTimestamp', E_USER_DEPRECATED);
+
+        return $this->getStartTimestamp($format);
+    }
+
+    /**
+     * @param string $format
+     *
+     * @return bool|string
+     */
+    public function getStartTimestamp($format = 'U')
+    {
+        return date($format, $this->startTimestamp);
+    }
+
+    /**
+     * @param string $format
+     *
+     * @return bool|string
+     */
+    public function getEndTimestamp($format = 'U')
+    {
+        return date($format, $this->endTimestamp);
     }
 
     /**
@@ -153,6 +201,6 @@ class Statement implements \JsonSerializable
      */
     public function getDeltaPrice()
     {
-        return ($this->getStartPrice() - $this->getEndPrice());
+        return $this->getStartPrice() - $this->getEndPrice();
     }
 }
