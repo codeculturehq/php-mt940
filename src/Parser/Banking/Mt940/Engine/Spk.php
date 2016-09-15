@@ -127,6 +127,26 @@ class Spk extends Engine
                 PREG_SPLIT_NO_EMPTY
         );
     }
+    
+    /**
+    * Overloaded:
+    * uses the 61 field to determine the entry timestamp.
+    *
+    * its possible that this is a second date in the line on SPK
+    *
+    * @return int
+    */
+    protected function parseTransactionEntryTimestamp()
+    {
+        $results = [];
+        if (preg_match('/^:61:(\d{2})(?>\d{4})(\d{4}){0,1}/', $this->getCurrentTransactionData(), $results)
+            && !empty($results[1]) && !empty($results[2])
+        ) {
+            return $this->sanitizeTimestamp($results[1] . $results[2], 'ymd');
+        } else {
+            return parent::parseTransactionEntryTimestamp();
+        }
+    }
 
     /**
      * Overloaded: Is applicable if first or second line has :20:STARTUMS or first line has -.
