@@ -92,6 +92,9 @@ class Transaction implements \JsonSerializable
      */
     public function setEntryTimestamp($var)
     {
+        if($var < $this->valueTimestamp)
+            $var = strtotime('+1 year', (int) $var);
+
         $this->entryTimestamp = (int) $var;
     }
 
